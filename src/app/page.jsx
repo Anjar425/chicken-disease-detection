@@ -18,6 +18,7 @@ export default function HomePage() {
     const detectionRef = useRef(null); // Ref untuk scroll ke bagian "detection"
 	const resultRef = useRef(null); // Ref untuk scroll ke hasil prediksi
 	const descriptionRef = useRef(null); // Ref untuk scroll ke deskripsi penyakit
+    const chatbotRef = useRef(null); // Ref untuk scroll ke chatbot
 
 
     // Fungsi scroll ke bagian tertentu
@@ -130,7 +131,7 @@ export default function HomePage() {
             <Navbar activeSection={activeSection} />
 
             <main className="container mx-auto px-6 py-8">
-                <section id="home-section" className="mb-12 pt-20">
+                <section id="home-section" className="mb-12">
                     <div className="relative h-96 rounded-lg overflow-hidden">
                         <Image
                             src="/Peternakan-Ayam.jpg"
@@ -216,6 +217,17 @@ export default function HomePage() {
 						</div>
 					)}
 
+                </section>
+                {/* Chatbot Section */}
+                <section ref={chatbotRef} className="mt-12">
+                    <Card className="bg-white text-gray-800 shadow-lg">
+                        <CardHeader>
+                            <CardTitle>Chatbot</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-lg">Chat with our bot for more details on disease prevention and treatment.</p>
+                        </CardContent>
+                    </Card>
                 </section>
             </main>
 
