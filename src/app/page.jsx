@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { ScrollArea } from '@/components/ui/scroll-area';
 import Navbar from './layout/navbar';
 import { useEffect, useState, useRef } from 'react';
 
@@ -16,17 +17,76 @@ export default function HomePage() {
 
     const [activeSection, setActiveSection] = useState("home"); // State untuk navbar aktif
     const detectionRef = useRef(null); // Ref untuk scroll ke bagian "detection"
-	const resultRef = useRef(null); // Ref untuk scroll ke hasil prediksi
-	const descriptionRef = useRef(null); // Ref untuk scroll ke deskripsi penyakit
+    const resultRef = useRef(null); // Ref untuk scroll ke hasil prediksi
+    const descriptionRef = useRef(null); // Ref untuk scroll ke deskripsi penyakit
     const chatbotRef = useRef(null); // Ref untuk scroll ke chatbot
+
+    const [messages, setMessages] = useState([]);
+    const [input, setInput] = useState('');
+    const [isTyping, setIsTyping] = useState(false);
+
+    const sendMessageToGPT = async (message) => {
+        if (!message || typeof message !== 'string' || message.trim() === '') {
+            return 'Error: Empty message received';
+        }
+
+        const formdata = new FormData();
+        formdata.append("prompt", message);
+
+        try {
+            const response = await fetch('/api', {
+                method: 'POST',
+                body: formdata,
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch');
+            }
+
+            const data = await response.json();
+            console.log(data)
+            return data.message || 'Error: No reply from GPT';
+        } catch (error) {
+            console.error('Error sending message:', error);
+            return 'Error: Could not get a response from GPT';
+        }
+    };
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+
+        // Validate input to ensure it's not empty or null
+        if (!input.trim()) {
+            return;
+        }
+
+        // Add user message
+        const userMessage = { id: Date.now(), role: 'user', content: input };
+        setMessages((prev) => [...prev, userMessage]);
+
+        // Clear input field
+        setInput('');
+        setIsTyping(true);
+
+        // Fetch GPT response
+        const gptReply = await sendMessageToGPT(input);
+
+        // Add bot reply after a delay
+        setMessages((prev) => [
+            ...prev,
+            { id: Date.now() + 1, role: 'bot', content: gptReply },
+        ]);
+
+        setIsTyping(false);
+    };
 
 
     // Fungsi scroll ke bagian tertentu
     const scrollToSection = (ref) => {
-		if (ref?.current) {
-			ref.current.scrollIntoView({ behavior: "smooth" });
-		}
-	};
+        if (ref?.current) {
+            ref.current.scrollIntoView({ behavior: "smooth" });
+        }
+    };
 
     // Update active section berdasarkan scroll
     useEffect(() => {
@@ -94,8 +154,8 @@ export default function HomePage() {
             const predictionLabel = predictionMap[result.prediction];
             setPrediction(predictionLabel);
 
-			scrollToSection(resultRef);
-			
+            scrollToSection(resultRef);
+
         } catch (error) {
             console.error("Error during prediction:", error);
             alert("Error during prediction: " + error.message);
@@ -115,16 +175,16 @@ export default function HomePage() {
     };
 
     const diseaseDescriptions = {
-		"Healthy": "The chicken is healthy with no visible signs of disease. It is important to maintain this condition by providing proper nutrition and a clean environment.",
-		
-		"Salmonella": "Salmonella is a bacterial infection that affects the digestive system of poultry, primarily caused by *Salmonella enterica* and *Salmonella gallinarum*. This infection is highly contagious and can spread rapidly within flocks, leading to significant economic losses.",
-		
-		"Coccidiosis": "Coccidiosis, also known as 'berak darah,' is a common poultry disease in Indonesia caused by protozoan parasites from the genus *Eimeria*. It primarily affects the digestive tract, leading to growth retardation, reduced carcass quality, and mortality. Transmission occurs through contaminated feed, water, or equipment, and environmental factors such as humidity and temperature play a crucial role in its spread.",
-		
-		"New Castle Disease": "Newcastle Disease (ND), also known as tetelo, is a highly contagious viral disease caused by avian paramyxovirus (APMV-1). First identified in Indonesia in 1926, it spreads through direct contact with infected birds, contaminated feed, water, and equipment. Common symptoms include respiratory distress, neurological disorders, and digestive issues. Prevention includes vaccination, improved biosecurity, and maintaining cleanliness in poultry environments."
-	};
-	
-	
+        "Healthy": "The chicken is healthy with no visible signs of disease. It is important to maintain this condition by providing proper nutrition and a clean environment.",
+
+        "Salmonella": "Salmonella is a bacterial infection that affects the digestive system of poultry, primarily caused by *Salmonella enterica* and *Salmonella gallinarum*. This infection is highly contagious and can spread rapidly within flocks, leading to significant economic losses.",
+
+        "Coccidiosis": "Coccidiosis, also known as 'berak darah,' is a common poultry disease in Indonesia caused by protozoan parasites from the genus *Eimeria*. It primarily affects the digestive tract, leading to growth retardation, reduced carcass quality, and mortality. Transmission occurs through contaminated feed, water, or equipment, and environmental factors such as humidity and temperature play a crucial role in its spread.",
+
+        "New Castle Disease": "Newcastle Disease (ND), also known as tetelo, is a highly contagious viral disease caused by avian paramyxovirus (APMV-1). First identified in Indonesia in 1926, it spreads through direct contact with infected birds, contaminated feed, water, and equipment. Common symptoms include respiratory distress, neurological disorders, and digestive issues. Prevention includes vaccination, improved biosecurity, and maintaining cleanliness in poultry environments."
+    };
+
+
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
@@ -174,58 +234,87 @@ export default function HomePage() {
                     </Card>
 
                     {prediction && (
-						<Card ref={resultRef}>
-							<CardHeader>
-								<CardTitle>Detection Result</CardTitle>
-							</CardHeader>
-							<CardContent className="flex flex-col items-center">
-								<div className="w-64 h-64 relative mb-4"> {/* Ukuran gambar diperkecil */}
-									<Image
-										src={imageUrl}
-										alt="Uploaded chicken image"
-										layout="fill"
-										className="rounded-lg"
-									/>
-								</div>
-								<p className="text-lg font-semibold">
-									Disease: <span className="text-green-600 dark:text-green-400">{prediction}</span>
-								</p>
-							</CardContent>
-							<CardFooter className="flex justify-center">
-								<Button onClick={() => {
-									setShowDescription((prev) => !prev);
-									if (!showDescription) {
-										setTimeout(() => scrollToSection(descriptionRef), 200); // Delay untuk memastikan UI update
-									}
-								}}>
-									{showDescription ? "Show Less" : "Learn More"}
-								</Button>
-							</CardFooter>
-						</Card>
-					)}
+                        <Card ref={resultRef}>
+                            <CardHeader>
+                                <CardTitle>Detection Result</CardTitle>
+                            </CardHeader>
+                            <CardContent className="flex flex-col items-center">
+                                <div className="w-64 h-64 relative mb-4"> {/* Ukuran gambar diperkecil */}
+                                    <Image
+                                        src={imageUrl}
+                                        alt="Uploaded chicken image"
+                                        layout="fill"
+                                        className="rounded-lg"
+                                    />
+                                </div>
+                                <p className="text-lg font-semibold">
+                                    Disease: <span className="text-green-600 dark:text-green-400">{prediction}</span>
+                                </p>
+                            </CardContent>
+                            <CardFooter className="flex justify-center">
+                                <Button onClick={() => {
+                                    setShowDescription((prev) => !prev);
+                                    if (!showDescription) {
+                                        setTimeout(() => scrollToSection(descriptionRef), 200); // Delay untuk memastikan UI update
+                                    }
+                                }}>
+                                    {showDescription ? "Show Less" : "Learn More"}
+                                </Button>
+                            </CardFooter>
+                        </Card>
+                    )}
 
-					{/* Kotak Deskripsi Penyakit Pisah */}
-					{showDescription && prediction && (
-						<div ref={descriptionRef} className="mt-8 p-6 bg-green-100 text-green-800 rounded-lg shadow-md">
-							<h3 className="text-2xl font-semibold mb-4">Disease Description</h3>
-							<p className="text-lg">
-								{diseaseDescriptions[prediction]} If you have further information, you can check our chatbot.
-							</p>
-							<Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white" onClick={() => scrollToSection(chatbotRef)}>
-								Go to Chatbot
-							</Button>
-						</div>
-					)}
+                    {/* Kotak Deskripsi Penyakit Pisah */}
+                    {showDescription && prediction && (
+                        <div ref={descriptionRef} className="mt-8 p-6 bg-green-100 text-green-800 rounded-lg shadow-md">
+                            <h3 className="text-2xl font-semibold mb-4">Disease Description</h3>
+                            <p className="text-lg">
+                                {diseaseDescriptions[prediction]} If you have further information, you can check our chatbot.
+                            </p>
+                            <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white" onClick={() => scrollToSection(chatbotRef)}>
+                                Go to Chatbot
+                            </Button>
+                        </div>
+                    )}
 
                 </section>
                 {/* Chatbot Section */}
-                <section ref={chatbotRef} className="mt-12">
-                    <Card className="bg-white text-gray-800 shadow-lg">
+                <section className="mt-12 h-[calc(100vh-3rem)]">
+                    <Card className="bg-white text-gray-800 shadow-lg h-full">
                         <CardHeader>
                             <CardTitle>Chatbot</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-lg">Chat with our bot for more details on disease prevention and treatment.</p>
+                        <CardContent className="h-[calc(100%-5rem)] flex flex-col">
+                            <p className="text-lg mb-4">Chat with our bot for more details on disease prevention and treatment.</p>
+                            <div className="flex flex-col flex-grow">
+                                <ScrollArea className="flex-grow mb-4 p-4 border rounded-md">
+                                    {messages.map((m) => (
+                                        <div key={m.id} className={`mb-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
+                                            <p
+                                                className={`inline-block p-2 rounded-lg ${m.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
+                                                    }`}
+                                            >
+                                                {m.content}
+                                            </p>
+                                        </div>
+                                    ))}
+                                    {isTyping && (
+                                        <div className="text-left">
+                                            <span className="inline-block p-2 rounded-lg bg-gray-200 text-black">Typing...</span>
+                                        </div>
+                                    )}
+                                </ScrollArea>
+                                <form onSubmit={onSubmit} className="flex space-x-2">
+                                    <Input
+                                        value={input}
+                                        onChange={(e) => setInput(e.target.value)}
+                                        placeholder="Say something..."
+                                        className="flex-grow"
+                                    />
+                                    <Button type="submit">Send</Button>
+
+                                </form>
+                            </div>
                         </CardContent>
                     </Card>
                 </section>
