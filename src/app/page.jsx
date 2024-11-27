@@ -286,8 +286,8 @@ export default function HomePage() {
                         </CardHeader>
                         <CardContent className="h-[calc(100%-5rem)] flex flex-col">
                             <p className="text-lg mb-4">Chat with our bot for more details on disease prevention and treatment.</p>
-                            <div className="flex flex-col flex-grow">
-                                <ScrollArea className="flex-grow mb-4 p-4 border rounded-md">
+                            <div className="flex flex-col h-[calc(100%-5rem)] md:h-[calc(100%-2rem)]">
+                                <ScrollArea className="flex-grow mb-4 p-4 border rounded-md ">
                                     {messages.map((m) => (
                                         <div key={m.id} className={`mb-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
                                             <p
@@ -312,7 +312,6 @@ export default function HomePage() {
                                         className="flex-grow"
                                     />
                                     <Button type="submit">Send</Button>
-
                                 </form>
                             </div>
                         </CardContent>
