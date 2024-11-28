@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Navbar from './layout/navbar';
-import { useEffect, useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 
 export default function HomePage() {
     const [prediction, setPrediction] = useState(null);
@@ -15,7 +15,8 @@ export default function HomePage() {
     const [imageFile, setImageFile] = useState(null);
     const [showDescription, setShowDescription] = useState(false); // State untuk menampilkan deskripsi penyakit
 
-    const [activeSection, setActiveSection] = useState("home"); // State untuk navbar aktif
+    const homeRef = useRef(null); // Ref untuk scroll ke bagian "home"
+    const aboutRef = useRef(null); // Ref untuk scroll ke bagian "about"
     const detectionRef = useRef(null); // Ref untuk scroll ke bagian "detection"
     const resultRef = useRef(null); // Ref untuk scroll ke hasil prediksi
     const descriptionRef = useRef(null); // Ref untuk scroll ke deskripsi penyakit
@@ -82,42 +83,20 @@ export default function HomePage() {
 
 
     // Fungsi scroll ke bagian tertentu
-    const scrollToSection = (ref) => {
-        if (ref?.current) {
-            ref.current.scrollIntoView({ behavior: "smooth" });
+    const scrollToSection = (section) => {
+        const sectionRefs = {
+            home: homeRef.current,
+            about: aboutRef.current,
+            detection: detectionRef.current,
+            result: resultRef.current,
+            description: descriptionRef.current,
+            chatbot: chatbotRef.current,
+        };
+    
+        if (sectionRefs[section]) {
+            sectionRefs[section].scrollIntoView({ behavior: 'smooth' });
         }
     };
-
-    // Update active section berdasarkan scroll
-    useEffect(() => {
-        const sections = [
-            { id: "home", ref: document.getElementById("home-section") },
-            { id: "detection", ref: document.getElementById("detection-section") },
-            { id: "about", ref: document.getElementById("about-section") },
-        ];
-
-        const observerOptions = {
-            root: null,
-            rootMargin: "0px",
-            threshold: 0.5,
-        };
-
-        const observerCallback = (entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    setActiveSection(entry.target.id);
-                }
-            });
-        };
-
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-        sections.forEach((section) => {
-            if (section.ref) observer.observe(section.ref);
-        });
-
-        return () => observer.disconnect();
-    }, []);
 
     const handlePredict = async (event) => {
         event.preventDefault();
@@ -188,7 +167,7 @@ export default function HomePage() {
 
     return (
         <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
-            <Navbar activeSection={activeSection} />
+            <Navbar scrollToSection={scrollToSection} />
 
             <main className="container mx-auto px-6 py-8">
                 <section id="home-section" className="mb-12">
@@ -205,14 +184,43 @@ export default function HomePage() {
                             <p className="text-lg md:text-xl max-w-2xl text-center">
                                 Your trusted partner in ensuring the health and productivity of your poultry. Our advanced system uses cutting-edge technology to help identify common diseases in chickens early and accurately.
                             </p>
-                            <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white" onClick={() => scrollToSection(detectionRef)}>
+                            <Button className="mt-6 bg-green-600 hover:bg-green-700 text-white" onClick={() => scrollToSection("about")}>
                                 Get Started
                             </Button>
                         </div>
                     </div>
                 </section>
 
-                <section id="detection-section" ref={detectionRef} className="grid gap-8 pt-20">
+                <section id="about-section" ref={aboutRef} className="mt-12 pt-10">
+                    <Card className="w-full">
+                        <CardHeader>
+                            <CardTitle>How to Use</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <ol className="list-decimal list-inside space-y-2 text-lg">
+                                <li>
+                                    <strong>Prepare an Image:</strong> Take a clear photo of the chicken's feces. Ensure the image is well-lit and focused for better accuracy.
+                                </li>
+                                <li>
+                                    <strong>Upload the Image:</strong> Click the "Upload Image" button and select the photo from your device.
+                                </li>
+                                <li>
+                                    <strong>Start Detection:</strong> Press the "Detect" button to begin the analysis. The system will process the image and predict any potential disease.
+                                </li>
+                                <li>
+                                    <strong>View Results:</strong> The detection result will appear below the upload section. You can click "Learn More" for detailed disease information.
+                                </li>
+                                <li>
+                                    <strong>Chat with the Bot:</strong> If you need further guidance or have questions about prevention and treatment, use the chatbot at the bottom.
+                                </li>
+                            </ol>
+                        </CardContent>
+                    </Card>
+                </section>
+
+
+
+                <section id="detection-section" ref={detectionRef} className="grid gap-8 pt-10">
                     <Card className="w-full">
                         <CardHeader>
                             <CardTitle>Upload Image</CardTitle>
@@ -234,7 +242,7 @@ export default function HomePage() {
                     </Card>
 
                     {prediction && (
-                        <Card ref={resultRef}>
+                        <Card >
                             <CardHeader>
                                 <CardTitle>Detection Result</CardTitle>
                             </CardHeader>
@@ -255,7 +263,7 @@ export default function HomePage() {
                                 <Button onClick={() => {
                                     setShowDescription((prev) => !prev);
                                     if (!showDescription) {
-                                        setTimeout(() => scrollToSection(descriptionRef), 200); // Delay untuk memastikan UI update
+                                        setTimeout(() => scrollToSection("description"), 200); // Delay untuk memastikan UI update
                                     }
                                 }}>
                                     {showDescription ? "Show Less" : "Learn More"}
@@ -271,7 +279,7 @@ export default function HomePage() {
                             <p className="text-lg">
                                 {diseaseDescriptions[prediction]} If you have further information, you can check our chatbot.
                             </p>
-                            <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white" onClick={() => scrollToSection(chatbotRef)}>
+                            <Button className="mt-4 bg-blue-600 hover:bg-blue-700 text-white" onClick={() => scrollToSection("chatbot")}>
                                 Go to Chatbot
                             </Button>
                         </div>
