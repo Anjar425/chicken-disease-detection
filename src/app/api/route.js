@@ -36,9 +36,9 @@ export async function POST(req) {
           status: 400,
         });
       } else {
-        const initialInstruction = "Anda adalah seorang ahli dalam penyakit ayam. Mohon menjawab dengan sangat sopan dan sesuai dengan bahasa yang digunakan setelah kalimat 'Berikut pertanyaannya'. Apabila pertanyaan tidak relevan dengan penyakit ayam, tolaklah dengan sopan dan nyatakan bahwa topik tersebut di luar cakupan layanan Anda. Berikut pertanyaannya: ";
-        const closingInstruction = ". Mohon pastikan bahasa jawaban Anda sama dengan bahasa yang digunakan pada kalimat pertanyaan di atas.";
-        prompt = initialInstruction + prompt + closingInstruction;        
+        const initialInstruction = "You are an expert in chicken diseases. Please answer very politely and use the same language as the one used after the phrase 'Here is the question'. If the question is not relevant to chicken diseases, politely reject it using the same language as the question. Here is the question: ";
+        const closingInstruction = ". Please ensure that your answer remains polite and matches the language used in the question.";
+        prompt = initialInstruction + prompt + closingInstruction; 
       }
   
       // Kirim prompt ke OpenAI ChatGPT API
