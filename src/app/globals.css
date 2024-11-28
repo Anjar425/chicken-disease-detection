@@ -78,3 +78,9 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+ol {
+  @apply list-decimal;
+  margin-left: 1.5em;
+}
+

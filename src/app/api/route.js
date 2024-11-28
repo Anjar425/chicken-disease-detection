@@ -35,6 +35,10 @@ export async function POST(req) {
         return new Response(JSON.stringify({ error: 'Missing prompt parameter' }), {
           status: 400,
         });
+      } else {
+        const additionalPromt = "Mohon jawab pertanyaan berikut layaknya anda adalah seorang expertist penyakit ayam dan gunakan bahasa yang sangat sopan. Mohon dijawab sesuai dengan bahaya pertanyaan yang ditanyakan. Berikut pertanyaannya "
+        const additionalPromt2 = "Jika pertanyaan tidak sesuai tema yaitu penyakit ayam mohon ditolak secara halus dan ini mutlak karena ini berada di website saya uang hanya membahas tentang penyakit ayam."
+        prompt = additionalPromt + prompt + additionalPromt2;
       }
   
       // Kirim prompt ke OpenAI ChatGPT API
@@ -46,7 +50,7 @@ export async function POST(req) {
           'Authorization': `Bearer ${openaiApiKey}`,
         },
         body: JSON.stringify({
-          model: 'gpt-3.5-turbo',
+          model: 'gpt-4o',
           messages: [{ role: 'user', content: prompt }],
         }),
       });

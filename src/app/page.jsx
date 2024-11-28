@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Navbar from './layout/navbar';
 import { useState, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export default function HomePage() {
     const [prediction, setPrediction] = useState(null);
@@ -92,7 +94,7 @@ export default function HomePage() {
             description: descriptionRef.current,
             chatbot: chatbotRef.current,
         };
-    
+
         if (sectionRefs[section]) {
             sectionRefs[section].scrollIntoView({ behavior: 'smooth' });
         }
@@ -297,13 +299,13 @@ export default function HomePage() {
                             <div className="flex flex-col h-[calc(100%-5rem)] md:h-[calc(100%-2rem)]">
                                 <ScrollArea className="flex-grow mb-4 p-4 border rounded-md ">
                                     {messages.map((m) => (
-                                        <div key={m.id} className={`mb-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
-                                            <p
-                                                className={`inline-block p-2 rounded-lg ${m.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'
-                                                    }`}
+                                        <div key={m.id} className={`list-decimal mb-4 ${m.role === 'user' ? 'text-right' : 'text-left'}`}>
+                                            <ReactMarkdown
+                                                className={`inline-block p-2 rounded-lg prose ${m.role === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-black'}`}
+                                                remarkPlugins={[remarkGfm]}
                                             >
                                                 {m.content}
-                                            </p>
+                                            </ReactMarkdown>
                                         </div>
                                     ))}
                                     {isTyping && (
