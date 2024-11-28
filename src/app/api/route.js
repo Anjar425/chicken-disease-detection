@@ -36,9 +36,9 @@ export async function POST(req) {
           status: 400,
         });
       } else {
-        const additionalPromt = "Mohon jawab pertanyaan berikut layaknya anda adalah seorang expertist penyakit ayam dan gunakan bahasa yang sangat sopan. Mohon dijawab sesuai dengan bahaya pertanyaan yang ditanyakan. Berikut pertanyaannya "
-        const additionalPromt2 = "Jika pertanyaan tidak sesuai tema yaitu penyakit ayam mohon ditolak secara halus dan ini mutlak karena ini berada di website saya uang hanya membahas tentang penyakit ayam."
-        prompt = additionalPromt + prompt + additionalPromt2;
+        const initialInstruction = "Anda adalah seorang ahli dalam penyakit ayam. Mohon menjawab dengan sangat sopan dan sesuai dengan bahasa yang digunakan setelah kalimat 'Berikut pertanyaannya'. Apabila pertanyaan tidak relevan dengan penyakit ayam, tolaklah dengan sopan dan nyatakan bahwa topik tersebut di luar cakupan layanan Anda. Berikut pertanyaannya: ";
+        const closingInstruction = ". Mohon pastikan bahasa jawaban Anda sama dengan bahasa yang digunakan pada kalimat pertanyaan di atas.";
+        prompt = initialInstruction + prompt + closingInstruction;        
       }
   
       // Kirim prompt ke OpenAI ChatGPT API
