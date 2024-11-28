@@ -199,16 +199,16 @@ export default function HomePage() {
                         <CardContent>
                             <ol className="list-decimal list-inside space-y-2 text-lg">
                                 <li>
-                                    <strong>Prepare an Image:</strong> Take a clear photo of the chicken's feces. Ensure the image is well-lit and focused for better accuracy.
+                                    <strong>Prepare an Image:</strong> Take a clear photo of the chicken&apos;s feces. Ensure the image is well-lit and focused for better accuracy.
                                 </li>
                                 <li>
-                                    <strong>Upload the Image:</strong> Click the "Upload Image" button and select the photo from your device.
+                                    <strong>Upload the Image:</strong> Click the &quot;Upload Image&quot; button and select the photo from your device.
                                 </li>
                                 <li>
-                                    <strong>Start Detection:</strong> Press the "Detect" button to begin the analysis. The system will process the image and predict any potential disease.
+                                    <strong>Start Detection:</strong> Press the &quot;Detect&quot; button to begin the analysis. The system will process the image and predict any potential disease.
                                 </li>
                                 <li>
-                                    <strong>View Results:</strong> The detection result will appear below the upload section. You can click "Learn More" for detailed disease information.
+                                    <strong>View Results:</strong> The detection result will appear below the upload section. You can click &quot;Learn More&quot; for detailed disease information.
                                 </li>
                                 <li>
                                     <strong>Chat with the Bot:</strong> If you need further guidance or have questions about prevention and treatment, use the chatbot at the bottom.
@@ -329,7 +329,7 @@ export default function HomePage() {
 
             <footer className="bg-white dark:bg-gray-800 shadow-md mt-12">
                 <div className="container mx-auto px-6 py-4 text-center text-gray-600 dark:text-gray-300">
-                    © 2023 Chicken Disease Detection. All rights reserved.
+                    © 2024 Chicken Disease Detection. All rights reserved.
                 </div>
             </footer>
         </div>
