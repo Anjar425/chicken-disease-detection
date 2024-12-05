@@ -375,7 +375,7 @@ export default function HomePage() {
 
                 </section>
                 {/* Chatbot Section */}
-                <section className="mt-12 h-[calc(100vh-3rem)]">
+                <section ref={chatbotRef} className="mt-12 h-[calc(100vh-3rem)]">
                     <Card className="bg-white text-gray-800 shadow-lg h-full">
                         <CardHeader>
                             <CardTitle>Chatbot</CardTitle>
