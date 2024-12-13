@@ -297,8 +297,14 @@ export default function HomePage() {
                                     <strong>Mulai Deteksi:</strong> Tekan tombol &quot;Deteksi&quot; untuk memulai analisis. Sistem akan memproses gambar dan memprediksi kemungkinan penyakit.
                                 </li>
                                 <li>
-                                    <strong>Lihat Hasil:</strong> Hasil deteksi akan muncul di bawah bagian unggah. Anda dapat mengklik &quot;Pelajari Lebih Lanjut&quot; untuk informasi rinci tentang penyakit.
+                                    <strong>Lihat Hasil:</strong> Hasil deteksi akan muncul di bawah bagian unggah. Anda dapat mengklik "Pelajari Lebih Lanjut" untuk informasi rinci tentang penyakit.
+                                    Terdapat 4 Klasifikasi:
+                                    <span className="text-green-500 font-bold text-lg"> Healthy</span>,
+                                    <span className="text-red-500 font-bold text-lg"> Salmonella</span>,
+                                    <span className="text-red-500 font-bold text-lg"> Coccidiosis</span>,
+                                    <span className="text-red-500 font-bold text-lg"> New Castle Disease</span>.
                                 </li>
+
                                 <li>
                                     <strong>Chat dengan Bot:</strong> Jika Anda memerlukan panduan lebih lanjut atau memiliki pertanyaan tentang pencegahan dan pengobatan, gunakan chatbot di bagian bawah.
                                 </li>
